@@ -1,0 +1,27 @@
+[project]
+name = "FizzBuzz"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    {name = "Krzysztof Stronka", email = "kstronka@apptension.com"},
+]
+dependencies = []
+requires-python = "==3.11.*"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
+
+
+[tool.pdm.scripts]
+start = "python src/__main__.py"
+unittest = "python -m unittest discover -s tests/unittest"
+pytest = "python -m pytest tests/pytest"
+
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "pytest>=7.4.4",
+]
