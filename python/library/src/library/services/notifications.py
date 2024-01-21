@@ -1,6 +1,11 @@
 from typing import Protocol
 
 
+def external_api_call():
+    # let's pretend this function calls 3rd party api
+    return
+
+
 class NotificationService(Protocol):
     def send_email(self, email, message):
         raise NotImplementedError
@@ -8,8 +13,7 @@ class NotificationService(Protocol):
 
 class _NotificationServiceImpl(NotificationService):
     def send_email(self, email, message):
-        # call external API
-        return
+        return external_api_call()
 
 
 def create_notification_service() -> NotificationService:

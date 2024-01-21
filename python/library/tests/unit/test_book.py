@@ -52,6 +52,7 @@ class TestBook:
 
     def test_send_overdue_notification_case_notification_service_not_set_then_raise_attribute_error(self, book_factory):
         book: models.Book = book_factory(is_rented=True)
+        book.set_notification_service(None)
 
         with pytest.raises(AttributeError):
             book.send_overdue_notification()

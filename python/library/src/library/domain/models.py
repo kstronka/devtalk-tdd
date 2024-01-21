@@ -44,8 +44,8 @@ class Book:
 
         self._notifications.send_email(self.rented_by.email, f'Book "{self.title}" you rented is overdue')
 
-    def set_library_policy(self, policy: business.LibraryPolicy):
+    def set_library_policy(self, policy: business.LibraryPolicy | None):
         self._policy = policy
 
-    def set_notification_service(self, service: notifications.NotificationService):
+    def set_notification_service(self, service: notifications.NotificationService | None):
         self._notifications = service

@@ -1,5 +1,9 @@
-from abc import ABC
 from typing import Protocol
+
+
+def complex_rental_period_calculation() -> int:
+    # let's pretend this depends on many factors and system configuration
+    return 14
 
 
 class LibraryPolicy(Protocol):
@@ -9,8 +13,7 @@ class LibraryPolicy(Protocol):
 
 class _LibraryPolicyImpl:
     def get_rental_period_length_days(self) -> int:
-        # complex logic here
-        return 14
+        return complex_rental_period_calculation()
 
 
 def create_library_policy():

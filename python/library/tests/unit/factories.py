@@ -3,6 +3,7 @@ from factory import post_generation
 
 from src.library.domain import business
 from src.library.domain import models
+from src.library.services import notifications
 from pytest_factoryboy import register
 
 
@@ -21,8 +22,9 @@ class BookFactory(factory.Factory):
         )
 
     @post_generation
-    def set_up_policy(self, create, extracted, **kwargs):
+    def set_up_externals(self, create, extracted, **kwargs):
         self.set_library_policy(business.create_library_policy())
+        self.set_notification_service(notifications.create_notification_service())
 
 
 @register
