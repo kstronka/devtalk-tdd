@@ -1,0 +1,2 @@
+class BookRentedAlready(Exception):
+    pass

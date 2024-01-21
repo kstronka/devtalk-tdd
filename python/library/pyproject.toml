@@ -5,7 +5,9 @@ description = "Default template for PDM package"
 authors = [
     {name = "Krzysztof Stronka", email = "kstronka@apptension.com"},
 ]
-dependencies = []
+dependencies = [
+    "attrs>=23.2.0",
+]
 requires-python = "==3.11.*"
 readme = "README.md"
 license = {text = "MIT"}
@@ -13,3 +15,14 @@ license = {text = "MIT"}
 
 [tool.pdm]
 distribution = false
+
+
+[tool.pdm.scripts]
+test = "pytest"
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "pytest>=7.4.4",
+    "pytest-factoryboy>=2.6.0",
+    "pytest-mock>=3.12.0",
+]
