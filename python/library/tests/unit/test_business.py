@@ -57,3 +57,11 @@ class TestLibraryBusiness:
         business.send_overdue_notification(book)
 
         mock.send_email.assert_called_with(book.rented_by.email, mocker.ANY)
+
+    def test_send_overdue_notification_case_book_not_rented_then_do_nothing(self, business, book, mocker):
+        mock = mocker.create_autospec(notifications.NotificationService)
+        business.set_notification_service(mock)
+
+        business.send_overdue_notification(book)
+
+        mock.send_email.assert_not_called()
