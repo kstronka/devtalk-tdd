@@ -14,11 +14,11 @@ class BookFactory(factory.Factory):
 
     class Params:
         is_rented = factory.Trait(
-            rented_by=factory.SubFactory('tests.unit.factories.AccountFactory'),
+            rented_by=factory.SubFactory('tests.factories.AccountFactory'),
             return_due_date=factory.Faker('future_date', end_date='+14d')
         )
         is_overdue = factory.Trait(
-            rented_by=factory.SubFactory('tests.unit.factories.AccountFactory'),
+            rented_by=factory.SubFactory('tests.factories.AccountFactory'),
             return_due_date=factory.Faker('past_date')
         )
 
