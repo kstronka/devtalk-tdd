@@ -18,9 +18,12 @@ class TestLibraryBusiness:
         return factory
 
     @pytest.fixture
-    def business(self, fake_library_policy):
+    def business(self, fake_library_policy, mocker):
         business = LibraryBusiness()
+
         business.set_library_policy(fake_library_policy())
+        business.set_notification_service(mocker.create_autospec(notifications.NotificationService))
+
         return business
 
     def test_rent_case_book_not_rented_then_mark_it_rented_by(self, business, book, account):
