@@ -1,3 +1,3 @@
 pytest_plugins = [
-    'tests.unit.factories',
+    'tests.factories',
 ]
