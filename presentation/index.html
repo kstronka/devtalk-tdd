@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Everything a programmer should know about testing: a practical guide
+
+???
+- Motivation
+- Bug prevention vs debugging
+- What is testing
+---
+
+# .center[Agenda]
+
+1. History buff
+2. A dive into xUnit style testing
+3. Anatomy of the tests
+4. Unit testing vs integration testing
+5. Fakes, stubs, mocks
+6. TDD example
+
+---
+
+# .center[History of testing]
+
+### *.center[„How to engineer a bug free solution?”]*
+This question has been on the minds of engineers since before the times the computers were invented.
+
+Originally the term „bug” was used in reference to hardware engineering and electrical circuits, 
+most likely since at least 1870s and was originally used to describe malfunctions and glitches in such systems. [1]
+
+Most famous case of that is perhaps that of an actual bug - a moth - trapped in the relay of the Mark II computer system in 1946. 
+In the later report authored by the operators who found the moth - there’s a statement that 
+it’s a „First actual case of bug being found”. [1]
+---
+
+class: center, middle
+
+`* insert a screenshot *`
+
+---
+
+## .center[Software bugs]
+
+With time, when hardware programming was replaced by software programing, 
+meaning of the term shifted towards what we know it to be today - an undesired, faulty behavior of the software.
+
+---
+
+### *.center[„Beware of bugs in the above code; I have only proved it correct, not tried it.”]*
+.right[D. Knuth]
+
+In the early days of computer programming, when programmers were actually good at mathematics, 
+there emerged a practice to develop formal program specifications. 
+As common in other engineering disciplines, language of mathematics is used to state the problem and provide a concrete solution. Then, by applying techniques of formal verification, a design - and by extension an implementation - can be proved correct. [1][2]
+
+It fell out of use due to not being really practical and very rigid. 
+It also required a great deal of mathematical expertise from the programmers. As programs grew larger this practice was almost entirely abandoned.
+
+---
+
+## .center[How software testing came to be?]
+
+It’s hard to determine exact point in time software testing emerged. In its early form it dates very far back. 
+However, it can be said that in 1990s, the heavy waterfall approach with its methodologies started to decline in significance in favor of new agile approach, 
+which favors flexibility [3]. 
+Formal methods of verification were slowly replaced by automated tests which both state the requirement as well as prove correctness of the code under testing.
+
+The year 1997 marks the release of JUnit 1.0, a Java unit testing framework which is the de facto standard defining the approach to unit testing [4]. 
+Soon after there was a boom of new testing methodologies and frameworks and the pursuit for better ways of testing started for good. 
+
+---
+## .center[Where are we now?]
+
+Twenty five years later there’s multiple different testing libraries and frameworks for every significant programming language that there is. 
+
+.center[`* insert refrence to the list> *`]
+
+The practice of test driven development emerged. 
+We have unit testing, integration testing, end-to-end testing, contract testing, api testing, 
+parametrized testing, mutation testing, exploratory testing, fuzz testing and many more! 
+
+---
+
+# .center[xUnit style testing]
+
+### *.center["Talk is cheap. Show me the code."]*
+.right[L. Torvalds]
+
+Let’s dive right in and see few examples of unit tests in different languages and frameworks.
+
+All the tets will document
+
+???
+Explain what FizzBuzz is
+
+- If N % 3 == 0 > Fizz
+- If N % 5 == 0 > Buzz
+- If both > FizzBuzz
+- Else: N
+
+---
+
+```Java
+class AppTest {
+    @Test 
+    void getMessageCaseOneThenReturnValue() {
+        App klass = new App();
+        String expected = "1";
+        String actual = klass.getMessage(1);
+        assertEquals(expected, actual);
+    }
+
+    @Test 
+    void getMessageCaseThreeThenReturnFizz() {
+        App klass = new App();
+        String expected = "Fizz";
+        String actual = klass.getMessage(3);
+        assertEquals(expected, actual);
+    }
+
+    @Test 
+    void getMessageCaseFiveThenReturnBuzz() {
+        App klass = new App();
+        String expected = "Buzz";
+        String actual = klass.getMessage(5);
+        assertEquals(expected, actual);
+    }
+
+    @Test 
+    void getMessageCaseFifteenThenReturnFizzBuzz () {
+        App klass = new App();
+        String expected = "FizzBuzz";
+        String actual = klass.getMessage(15);
+        assertEquals(expected, actual);
+    }
+}
+```
+
+???
+This is JUnit
+- De facto standards
+- Test suites
+- Test cases
+- Assertions
+---
+```javascript
+describe('FizzBuzz', () => {
+  test('case 1 then return 1', () => {
+    const expected = '1';
+    const actual = fizzBuzz(1);
+
+    expect(actual).toBe(expected);
+  });
+
+  test('case 3 then return Fizz', () => {
+    const expected = 'Fizz';
+    const actual = fizzBuzz(3);
+
+    expect(actual).toBe(expected);
+  });
+
+  test('case 5 then return Buzz', () => {
+    const expected = 'Buzz';
+    const actual = fizzBuzz(5);
+
+    expect(actual).toBe(expected);
+  });
+
+  test('case 15 then return FizzBuzz', () => {
+    const expected = 'FizzBuzz';
+    const actual = fizzBuzz(15);
+
+    expect(actual).toBe(expected);
+  });
+});
+```
+???
+This is Jest. 
+Although it appears different, same elements can be identified here.
+---
+```python
+class TestFizzBuzz(unittest.TestCase):
+    def test_get_message_case_one_then_return_it(self):
+        expected = "1"
+        actual = fizzbuzz.get_message(1)
+
+        self.assertEqual(expected, actual)
+
+    def test_get_message_case_three_then_return_fizz(self):
+        expected = "Fizz"
+        actual = fizzbuzz.get_message(3)
+
+        self.assertEqual(expected, actual)
+
+    def test_get_message_case_five_then_return_buzz(self):
+        expected = "Buzz"
+        actual = fizzbuzz.get_message(5)
+
+        self.assertEqual(expected, actual)
+
+    def test_get_message_case_fifteen_then_return_fizzbuzz(self):
+        expected = "FizzBuzz"
+        actual = fizzbuzz.get_message(15)
+
+        self.assertEqual(expected, actual)
+```
+
+???
+Next up: python using unittest library. Striking resemblance ot JUnit and in fact some people used to call this PyUnit.
+---
+```python
+class TestFizzBuzz:
+    def test_get_message_case_one_then_return_it(self):
+        expected = "1"
+        actual = fizzbuzz.get_message(1)
+
+        assert expected == actual
+
+    def test_get_message_case_three_then_return_fizz(self):
+        expected = "Fizz"
+        actual = fizzbuzz.get_message(3)
+
+        assert expected == actual
+
+    def test_get_message_case_five_then_return_buzz(self):
+        expected = "Buzz"
+        actual = fizzbuzz.get_message(5)
+
+        assert expected == actual
+
+    def test_get_message_case_fifteen_then_return_fizzbuzz(self):
+        expected = "FizzBuzz"
+        actual = fizzbuzz.get_message(15)
+
+        assert expected == actual
+```
+???
+Pytest library.
+We'll use that in the future examples
+
+---
+
+We can immediately observe that despite obvious syntax differences all these test suites are quite similar in structure. 
+In fact there’s a set of certain conventions that most testing environments follow. 
+In all these test suites we can clearly identify the test cases and the assertions. 
+The de facto standard emerged from the SUnit/JUnit and testing frameworks that follow these design principles are collectively called xUnit frameworks. [5]
+???
+Pytest library. 
+
+Explain the point of this excercise:
+- it transcends language
+- knowledge is applicable everywhere
+- same patterns and principles apply to FE/BE and any other type of applications
+- there are other approaches like BDD, there are other libraries for E2E - they live a bit outside, we'll leave them for now. 
+
+We'll use that in the future.
+
+---
+
+# .center[What makes a great unit test?]
+
+### *.center["A well-written program is its own Heaven; a poorly-written program is its own Hell."]*
+.right[The Tao of Programming]
+
+Relying on the testing framework isn’t enough to guarantee that the tests we are developing will automatically be good. 
+It is up to the programmer to guarantee quality of the test suite. But what makes for a good test really? In the book „Testing rails” [6] 
+the authors identified key characteristics of an effective test suite. The tests should be:
+
+- Fast
+- Complete
+- Reliable
+- Isolated
+- Maintainable
+- Expressive
+
+???
+FCRIME acronym
+
+---
+
+## .center[Okay. So how do I know my tests are good enough?]
+
+How to tell whether tests meet all those requirements? Unfortunately, 
+there aren’t any set rules that say for example „your tests should run in under X ms each” or „your tests should cover X % of code 
+to be considered complete” etc. 
+
+When trying ot assert quality of the tests it’s useful 
+to see the requirements as a continuum on which they lie. 
+In my opinion, it’s practical to use common sense when deciding on when a test is good enough.
+
+---
+
+## .center[Couple of examples]
+
+- Integration tests will never be as fast as unit tests. What may be a slow time for a unit test can be absolutely okay for an integration test.
+- It’s very hard to have 100% coverage. Should you also cover 3rd party dependencies with your tests? Should you write tests that test the language itself? In reality you need to draw the line somewhere.
+- Sometimes it’s not wrong to have lots of tests run on a database. If the tests are fast and your framework enables it - like Django does for example - then you shouldn’t go out of your way to mock the database in every test. Other times you really want to have the tests truly isolated.
+- Sometimes it’s okay to have some duplication in the tests rather than to have a poor abstraction
+- It’s fine for some of the e2e or integration tests to be more than few lines of code. But generally - you don’t want your tests to be more than few lines of code.
+
+---
+
+class: middle
+
+As you can see - answering the question „Are the tests good?” can depend on many things. 
+It’s still useful to have those guidelines in mind. 
+Having that out of the way, let’s now explore ways to make tests as good as possible!
+
+---
+
+## .center[Clean tests]
+
+In his fantastic book, „Clean code” [7], Robert Martin stressed out the concept of code cleanliness as a quality in itself. 
+Obviously, it can be extended to tests and, in fact, Uncle Bob states that readability is what makes them clean. Although, 
+it goes without saying that all the „clean code” rules also apply. 
+To illustrate some key rules we will perform an excercise of taking some totally „dirty” tests and examine them.
+
+---
+
+## .center[Example 1]
+### .center[The "anything" test]
+
+```python
+class TestLibrary:
+    def test_business_methods(self):
+        business = LibraryBusiness()
+        book = Book('Do androids dream of electric sheep?', 'Philip K. Dick', None, None)
+        account = Account('jsmith@example.com', 'John Smith')
+        business.rent(book, to=account)
+
+        assert book.rented_by == account
+        assert book.return_due_date
+
+        business.make_return(book)
+        assert book.rented_by is None
+
+        business.rent(book, to=account)
+        other = Account('randy@example.com', 'Randy Marsh')
+
+        with pytest.raises(Exception):
+            business.rent(to=other)
+```
+
+???
+Whats wrong?
+
+- That type of smell can describe different parts of the test. What it refers to is ambiguity of a test.
+- Unclear naming - hard to guess what it does - not [M]aintainable
+- Lots of data irrelevant to the logic being tested; duplications - [M]aintainable, not [E]xpressive
+- Broken [I]solation
+- Assertions not precise - not [R]eliable
+- Broken flow - setting stuff up is mixed with code execution and assertions not - [M]antainable
+- It'd be hard to know what's wrong if the test - not [R]eliable
+
+---
+
+## .center[Example 1 improved]
+
+```python
+class TestLibraryBusiness:
+    @pytest.fixture
+    def business(self, fake_library_policy, mocker):
+        business = LibraryBusiness()
+        return business
+
+    def test_rent_case_book_not_rented_then_mark_it_rented_by(self, business, book, account):
+        business.rent(book, to=account)
+        assert book.rented_by == account
+
+    def test_rent_case_rented_already_then_raise_error(self, business, book_factory, account):
+        book = book_factory(is_rented=True)
+
+        with pytest.raises(errors.BookRentedAlready):
+            business.rent(book, to=account)
+
+    def test_make_return_always_clear_book_rented_at(self, business, book_factory):
+        book = book_factory(is_rented=True)
+        business.make_return(book)
+        assert book.rented_by is None
+
+    def test_make_return_always_clear_return_due_date(self, business, book_factory):
+        book = book_factory(is_rented=True)
+        business.make_return(book)
+        assert book.return_due_date is None
+```
+???
+Explain what was done:
+- Naming conventions - Given-When-Then pattern
+- Structure of a test - Arange-Act-Assert pattern
+- De-duplication - use factories, factory methods, fixtures to get rid of things that aren't differentiators for a test
+- One concept per test
+- One assertion per test?
+
+---
+
+## .center[Example 1 - factories]
+
+```python
+@register
+class BookFactory(factory.Factory):
+    class Meta:
+        model = models.Book
+
+    title = factory.Faker('word', part_of_speech='noun')
+    author = factory.Faker('name_nonbinary')
+
+    class Params:
+        is_rented = factory.Trait(
+            rented_by=factory.SubFactory('tests.factories.AccountFactory'),
+            return_due_date=factory.Faker('future_date', end_date='+14d')
+        )
+        is_overdue = factory.Trait(
+            rented_by=factory.SubFactory('tests.factories.AccountFactory'),
+            return_due_date=factory.Faker('past_date')
+        )
+```
+
+???
+It's not relevant what kind of factories you use - can be homebrewed - it's important to use any.
+Especially in data-driven systems!
+
+- Discuss factory antipatterns
+- optionals None by default > reduce flakiness
+- enumerations default too
+
+---
+
+## .center[Takeaways]
+
+- Naming conventions - Given-When-Then pattern
+- Structure of a test - Arange-Act-Assert pattern
+- De-duplication - use factories, factory methods, fixtures to get rid of things that aren't differentiators for a test
+- One concept per test
+- One assertion per test?
+
+---
+
+## .center[Example 2]
+### .center[The mocker]
+
+```pytest
+def test_overdue(self, book, account, mocker):
+    business = LibraryBusiness()
+    mocker.patch('src.library.domain.policies.complex_rental_period_calculation', return_value=10)
+    business.rent(book, to=account)
+    assert book.return_due_date == dt.date.today() + dt.timedelta(days=10)
+```
+
+???
+Whats wrong this time? It appears rather okay.
+
+Well, it's the misuse of mocks:
+- We test implementation
+- We introduce constraints -> refactoring policies module would break A LOT OF TESTS
+- That smell also indicates problem in the SUT -> coupled architecture
+- Surely, there must be a better way?
+
+---
+
+## .center[Example 2 - preparing the fix]
+
+```python
+def complex_rental_period_calculation() -> int:
+    # let's pretend this depends on many factors and system configuration
+    return 14
+
+
+class LibraryPolicy(Protocol):
+    def get_rental_period_length_days(self) -> int:
+        raise NotImplementedError
+
+
+class _LibraryPolicyImpl:
+    def get_rental_period_length_days(self) -> int:
+        return complex_rental_period_calculation()
+
+
+def create_library_policy():
+    return _LibraryPolicyImpl()
+```
+
+???
+
+There is! We can use design patterns and general rules of good programing to our advantage.
+
+When we improve code design we're then able to use our own fake. Expand on what we did:
+- We introduced an abstraction
+- We've cut the dependency - as the business class now knows only of the interface
+- We will provide a fake implementation to the interface
+- The default implementation is still there - a factory will return it
+
+---
+
+## .center[Example 2 - preparing the fix, pt. 2]
+
+```python
+class LibraryBusiness:
+    def __init__(self):
+        self._policy: policies.LibraryPolicy = policies.create_library_policy()
+
+
+    def set_library_policy(self, policy: policies.LibraryPolicy):
+        self._policy = policy
+
+    ...
+```
+
+???
+We opted for a dependency injection via setter. In the class under test we replaced direct call with
+the policy.
+
+We can now freely replace the dependency in the tests the tests.
+
+---
+
+## .center[Example 2 fixed]
+
+```python
+class TestLibraryBusiness:
+    @pytest.fixture
+    def fake_library_policy(self):
+        def factory(rental_period_length=14):
+            class FakePolicy:
+                def get_rental_period_length_days(self) -> int:
+                    return rental_period_length
+
+            return FakePolicy()
+
+        return factory
+
+    @pytest.fixture
+    def business(self, fake_library_policy, mocker):
+        business = LibraryBusiness()
+        business.set_library_policy(fake_library_policy())
+        return business
+
+    @pytest.mark.parametrize('period', [14, 28])
+    def test_rent_case_can_rent_then_set_return_due_date(self, business, book, account, fake_library_policy, period):
+        business.set_library_policy(fake_library_policy(period))
+        business.rent(book, to=account)
+        assert book.return_due_date == dt.date.today() + dt.timedelta(days=period)
+```
+
+???
+
+There is! We can use design patterns and general rules of good programing to our advantage.
+
+When we improve code design we're then able to use our own fake. We also used existing factory fixture to provide
+a stub right away.
+
+Notice this: even if there was 100 tests that rely on the policy we can update the fixtures and have all 100 fixed.
+
+A huge improvement compared to mocks!
+
+Note the parametrization as well!
+
+---
+
+## Takeaways
+
+- Mocking in tests often is a code smell
+- Good architecture results in testable code. Especially useful are:
+    - factories/factory methods and other creational patterns
+    - dependency injection
+    - interfaces/protocols/abstract classes
+- When in doubt - abstract away!
+- Prefer testing results over testing the implementation
+
+---
+
+### Example 3
+## .center[The "I could assert results as well" test]
+
+```python
+def test_notification(self, book, account, mocker):
+    business = LibraryBusiness()
+    business.rent(book, to=account)
+    book.return_due_date = dt.date.fromisoformat('1900-01-01')
+    spy = mocker.spy(notifications, name='external_api_call')
+    business.send_overdue_notification(book)
+    spy.assert_called_once()
+```
+
+???
+
+Here an attempt to check whether external notification api was made.
+It still didn't change the fact that it was indeed called. 
+This means that the dependency is still there so the test isn't [F]ast nor [I]solated.
+We could decide this is an integration test or we could actually mock if it's inconvenient to call that service.
+
+---
+
+## Example 3 - preparation
+
+```python
+# notifications.py 
+
+def external_api_call(email, message):
+    # let's pretend this function calls 3rd party api
+    print("External API called!")
+    return
+
+
+class NotificationService(Protocol):
+    def send_email(self, email, message):
+        raise NotImplementedError
+
+
+class _NotificationServiceImpl(NotificationService):
+    def send_email(self, email, message):
+        # it's a nice place to do required pre-formatting of the data
+        # before calling the externals
+        return external_api_call(email, message)
+
+
+def create_notification_service() -> NotificationService:
+    return _NotificationServiceImpl()
+```
+
+???
+Same drill - we abstract away the extenrals.
+
+---
+
+## Example 3 - preparation, pt. 2
+
+
+```python
+# business.py
+
+class LibraryBusiness:
+    def __init__(self):
+        self._policy: policies.LibraryPolicy = policies.create_library_policy()
+        self._notifications: notifications.NotificationService = notifications.create_notification_service()
+
+    def set_library_policy(self, policy: policies.LibraryPolicy):
+        self._policy = policy
+
+    def set_notification_service(self, service: notifications.NotificationService):
+        self._notifications = service
+```
+
+---
+
+## Example 2 - fixed
+
+```python
+class TestLibraryBusiness:
+    ...
+
+    @pytest.fixture
+    def business(self, fake_library_policy, mocker):
+        business = LibraryBusiness()
+
+        business.set_library_policy(fake_library_policy())
+        business.set_notification_service(mocker.create_autospec(notifications.NotificationService))
+
+        return business
+
+    def test_send_overdue_notification_case_book_is_overdue_then_send_email(self, business, book_factory, mocker):
+        mock = mocker.create_autospec(notifications.NotificationService)
+        business.set_notification_service(mock)
+        book = book_factory(is_overdue=True)
+
+        business.send_overdue_notification(book)
+
+        mock.send_email.assert_called_with(book.rented_by.email, mocker.ANY)
+```
+
+???
+
+We used a mock to actually check whether the contract between the business is held.
+
+Since calling the service is a side effect then we have to use a mock.
+We can write our own or we can use a library one.
+
+It's not the same to the Example 2 though - again -> notice decoupling
+
+---
+
+## Takeaways
+### What are mocks, fakes and stubs anyway?
+
+` TODO: write this based on M. Fowlers article `
+
+---
+
+# .center[Bibliography]
+
+1. Wikipedia contributors. (n. d.), *„Software bug”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Software_bug
+2. Wikipedia contributors. (n. d.), *„Formal specification”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Formal_specification
+3. Wikipedia contributors. (n. d.), *„Agile software development”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Agile_software_development
+4. Wikipedia contributors. (n. d.), *„Unit testing”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Unit_testing#History
+5. Wikipedia contributors. (n. d.), *„xUnit”*. Wikipedia. Retrieved January 21, 2024, from https://en.wikipedia.org/wiki/XUnit
+6. Steiner J., Quenneville J. (2017). *„Testing Rails”*. thoughtbot, inc., Retrieved January 21, 2024, from https://github.com/thoughtbot/testing-rails
+7. Martin R. C. (2014), *„Czysty kod”*. Helion
+8. Fowler M. (2019), *„Refaktoryzacja”*. Helion
+
+---
+class: center, middle
+
+# Thank you for the attention!
+
+---
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
