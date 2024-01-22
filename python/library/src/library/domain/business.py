@@ -23,6 +23,12 @@ class LibraryBusiness:
         book.return_due_date = None
 
     def send_overdue_notification(self, book: Book):
+        if not book.rented_by:
+            return
+
+        if book.return_due_date >= dt.date.today():
+            return
+
         self._notifications.send_email(
             book.rented_by.email,
             f'Book {book.title} you rented is overdue. Rental period ended on {book.return_due_date}',
