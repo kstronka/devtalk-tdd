@@ -77,3 +77,13 @@ class TestLibraryBusiness:
         business.send_overdue_notification(book)
 
         mock.send_email.assert_not_called()
+
+    def test_send_overdue_notification_case_sent_then_return_true(self, business, book_factory):
+        book = book_factory(is_rented=True, return_due_date=dt.date.today() - dt.timedelta(days=1))
+        result = business.send_overdue_notification(book)
+        assert result
+
+    def test_send_overdue_notification_case_not_sent_then_return_false(self, business, book_factory):
+        book = book_factory(is_rented=True, return_due_date=dt.date.today())
+        result = business.send_overdue_notification(book)
+        assert not result

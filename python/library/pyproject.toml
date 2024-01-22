@@ -26,3 +26,6 @@ dev = [
     "pytest-factoryboy>=2.6.0",
     "pytest-mock>=3.12.0",
 ]
+
+[pytest]
+log_cli = true
