@@ -13,7 +13,6 @@
         font-family: 'Yanone Kaffeesatz';
         font-weight: normal;
       }
-      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
     </style>
   </head>
   <body>
@@ -277,7 +276,7 @@ We'll use that in the future.
 
 ---
 
-# .center[What makes a great unit test?]
+# .center[What makes a great test?]
 
 ### *.center["A well-written program is its own Heaven; a poorly-written program is its own Hell."]*
 .right[The Tao of Programming]
@@ -576,20 +575,22 @@ Note the parametrization as well!
 
 ---
 
-## Takeaways
+## .center[Takeaways]
+### .center[*"Only mock what you own, because mocking others is rude."*]
+.right[Hyneck Schlawack]
 
-- Mocking in tests often is a code smell
-- Good architecture results in testable code. Especially useful are:
+- Mocking in tests often **is** a code smell, but helpful **when done right** [8]
+- Good architecture results in testable code. Testable code results in good architecture. Especially useful are:
     - factories/factory methods and other creational patterns
     - dependency injection
     - interfaces/protocols/abstract classes
 - When in doubt - abstract away!
-- Prefer testing results over testing the implementation
+- Prefer testing results over testing the implementation 
 
 ---
 
-### Example 3
-## .center[The "I could assert results as well" test]
+## .center[Example 3]
+### .center[I am watching you!]
 
 ```python
 def test_notification(self, book, account, mocker):
@@ -597,7 +598,9 @@ def test_notification(self, book, account, mocker):
     business.rent(book, to=account)
     book.return_due_date = dt.date.fromisoformat('1900-01-01')
     spy = mocker.spy(notifications, name='external_api_call')
+
     business.send_overdue_notification(book)
+
     spy.assert_called_once()
 ```
 
@@ -678,13 +681,13 @@ class TestLibraryBusiness:
         return business
 
     def test_send_overdue_notification_case_book_is_overdue_then_send_email(self, business, book_factory, mocker):
-        mock = mocker.create_autospec(notifications.NotificationService)
-        business.set_notification_service(mock)
+        spy = mocker.create_autospec(notifications.NotificationService)
+        business.set_notification_service(spy)
         book = book_factory(is_overdue=True)
 
         business.send_overdue_notification(book)
 
-        mock.send_email.assert_called_with(book.rented_by.email, mocker.ANY)
+        spy.send_email.assert_called_with(book.rented_by.email, mocker.ANY)
 ```
 
 ???
@@ -698,30 +701,128 @@ It's not the same to the Example 2 though - again -> notice decoupling
 
 ---
 
-## Takeaways
-### What are mocks, fakes and stubs anyway?
+## .center[Takeaways]
+### .center["Why should I care for mocks, fakes, stubs and spies anyway?"]
+.right[me, figuring it all out for the first time]
 
-` TODO: write this based on M. Fowlers article `
+There's a subtle difference between examples 2 and a 3. First uses a fake/stub, and another uses a mock. 
+Martin Fowler did a great job explaining the topic in his article "Mocks Aren't Stubs" [9]. Let's understand the differences:
+- Fakes provide a working implemetation, but often simplistic or otherwise unsuitable for production. E. g.: An in memory database, an unsafe password hasher.
+They're used to make tests faster and/or to break from external dependencies.
+- Stubs are configured to guarantee results for calls expected during the tests. Generally they're used over fakes then writing a fake is too complex.
+E. g.: A stub for an external api to guarantee data which code under test receives when making a called
+- Spies record information about the calls received, useful when testing side effects. 
+- Mock = Spy + Stub
 
 ---
 
+# .center[Unit tests vs Integration tests]
+
+So far we haven't discussed whether the tests we did were unit or integration tests. 
+How does one tell a unit test from an integration test apart? 
+
+Actually: it depends! Practice shows than in fact all tests lie on a spectrum between an ideal unit test, 
+integration test all the way through to contract tests and end-to-end tests. But how so?
+
+An ideal unit test is only about a single element as a unit the system under test that runs in a complete isolation. 
+It's free of any dependencies. It's simple and it runs fast. Question is: how do you define a unit? Should it be a method or a class? 
+Should you test private methods?
+
+An integration test tests an interaction of multiple components of the system under tests. It's somewhat slower and more complex than a unit test.
+Similarily, one may ask: if you replace dependencies with fakes - does it make it a unit test? 
+
+In a well designed test suite you have a mixture of all those types of tests.
+
+???
+
+What does that mean?
+
+The testing pyramid.
+
+---
+
+# .center[Test Driven Development]
+
+Let's now get to the next level and see what all the fuzz about test driven developement is all about! 
+
+What it is:
+
+- A tool in programmers toolbox
+- A proven and established methodology
+- A continuous process of writing the code in an organized way
+
+What it's not:
+
+- A fixed way of rules
+- A "one size fits all" solution to all your problems
+
+---
+
+# .center[Test Driven Development in a nutshell]
+
+It's rather simple really! When you apply TDD, you work in a constant loop of:
+
+- Forming an intention of what you're going to implement
+- Adding a test which tests what you're going to implement
+- Running the test and observe it failing
+- Making it pass the fastest way possible
+- Refactoring the code to get rid of duplications
+
+That loop is expertly explained by Kent Beck himself in his book [10]. A must read!
+
+---
+
+# .center[Putting the theory into practice]
+
+That's all very cool, but what of it? The TDD steps sound rather simple but at the same it's all very vague and doesn't seem smart at all.
+
+
+In fact it is hard to write about TDD. TDD is a process. That's why we're just going for a demo.
+
+We're going to implement a feature which calculates a late fee in a library system. Let's assume:
+
+- A grace period of seven
+- An initial fee of 1 dollar
+- A daily fee of 25 cents a day
+
+---
 # .center[Bibliography]
 
-1. Wikipedia contributors. (n. d.), *„Software bug”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Software_bug
-2. Wikipedia contributors. (n. d.), *„Formal specification”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Formal_specification
-3. Wikipedia contributors. (n. d.), *„Agile software development”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Agile_software_development
-4. Wikipedia contributors. (n. d.), *„Unit testing”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Unit_testing#History
-5. Wikipedia contributors. (n. d.), *„xUnit”*. Wikipedia. Retrieved January 21, 2024, from https://en.wikipedia.org/wiki/XUnit
-6. Steiner J., Quenneville J. (2017). *„Testing Rails”*. thoughtbot, inc., Retrieved January 21, 2024, from https://github.com/thoughtbot/testing-rails
-7. Martin R. C. (2014), *„Czysty kod”*. Helion
-8. Fowler M. (2019), *„Refaktoryzacja”*. Helion
+[1] Wikipedia contributors. (n. d.), *„Software bug”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Software_bug
+
+[2] Wikipedia contributors. (n. d.), *„Formal specification”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Formal_specification
+
+[3] Wikipedia contributors. (n. d.), *„Agile software development”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Agile_software_development
+
+[4] Wikipedia contributors. (n. d.), *„Unit testing”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Unit_testing#History
+
+[5] Wikipedia contributors. (n. d.), *„xUnit”*. Wikipedia. Retrieved January 21, 2024, from https://en.wikipedia.org/wiki/XUnit
+
+[6] Steiner J., Quenneville J. (2017). *„Testing Rails”*. thoughtbot, inc., Retrieved January 21, 2024, from https://github.com/thoughtbot/testing-rails
+
+
+---
+# .center[Bibliography continued]
+
+[7] Martin R. C. (2014), *„Czysty kod”*. Helion
+
+[8] Schlawack H. (2022), *„"Don’t Mock What You Don’t Own" in 5 Minutes”*, Retrieved January 24, 2024, from https://hynek.me/articles/what-to-mock-in-5-mins/
+
+[9] Fowler M. (2007), *„Mocks Aren't Stubs”*, Retrieved January 24, 2024, from https://www.martinfowler.com/articles/mocksArentStubs.html
+
+[10] Beck K. (2014), *„TDD. Sztuka tworzenia dobrego kodu”*, Helion
+
+---
+
+# .center[Bibliography TL;DR]
+
+If you were to read just one thing from the bibliography, just pick [10]. 
 
 ---
 class: center, middle
 
 # Thank you for the attention!
 
----
 
     </textarea>
     <script src="https://remarkjs.com/downloads/remark-latest.min.js">
