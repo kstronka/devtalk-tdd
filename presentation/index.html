@@ -13,6 +13,16 @@
         font-family: 'Yanone Kaffeesatz';
         font-weight: normal;
       }
+      figcaption {
+        color: gray;
+        font-size: 12px;
+      }
+
+      .remark-code {
+        font-size: 12px;
+        align-self: center;
+        vertical-align: middle;
+      }
     </style>
   </head>
   <body>
@@ -50,27 +60,22 @@ most likely since at least 1870s and was originally used to describe malfunction
 Most famous case of that is perhaps that of an actual bug - a moth - trapped in the relay of the Mark II computer system in 1946. 
 In the later report authored by the operators who found the moth - there’s a statement that 
 it’s a „First actual case of bug being found”. [1]
----
-
-class: center, middle
-
-`* insert a screenshot *`
-
----
-
-## .center[Software bugs]
-
-With time, when hardware programming was replaced by software programing, 
-meaning of the term shifted towards what we know it to be today - an undesired, faulty behavior of the software.
 
 ---
 
 ### *.center[„Beware of bugs in the above code; I have only proved it correct, not tried it.”]*
 .right[D. Knuth]
 
-In the early days of computer programming, when programmers were actually good at mathematics, 
+In the early days of computer programming, when programmers were actually good at mathematics and computing price was high
 there emerged a practice to develop formal program specifications. 
 As common in other engineering disciplines, language of mathematics is used to state the problem and provide a concrete solution. Then, by applying techniques of formal verification, a design - and by extension an implementation - can be proved correct. [1][2]
+
+.center[
+    <figure>
+        <img src="images/R-32.jpeg", width="30%">
+        <figcaption>Hard to imagine running automated test suites on this thing!</figcaption>
+    </figure>
+]
 
 It fell out of use due to not being really practical and very rigid. 
 It also required a great deal of mathematical expertise from the programmers. As programs grew larger this practice was almost entirely abandoned.
@@ -82,7 +87,7 @@ It also required a great deal of mathematical expertise from the programmers. As
 It’s hard to determine exact point in time software testing emerged. In its early form it dates very far back. 
 However, it can be said that in 1990s, the heavy waterfall approach with its methodologies started to decline in significance in favor of new agile approach, 
 which favors flexibility [3]. 
-Formal methods of verification were slowly replaced by automated tests which both state the requirement as well as prove correctness of the code under testing.
+With the price of computing time getting lower and lower the formal methods of verification were slowly replaced by automated tests. Automated tests state both the requirement as well as prove correctness of the code under testing.
 
 The year 1997 marks the release of JUnit 1.0, a Java unit testing framework which is the de facto standard defining the approach to unit testing [4]. 
 Soon after there was a boom of new testing methodologies and frameworks and the pursuit for better ways of testing started for good. 
@@ -92,7 +97,12 @@ Soon after there was a boom of new testing methodologies and frameworks and the 
 
 Twenty five years later there’s multiple different testing libraries and frameworks for every significant programming language that there is. 
 
-.center[`* insert refrence to the list> *`]
+.center[
+    <figure>
+        <img src="images/testing_report.png", width="40%">
+        <figcaption>Example testing report in PyCharm</figcaption>
+    </figure>
+]
 
 The practice of test driven development emerged. 
 We have unit testing, integration testing, end-to-end testing, contract testing, api testing, 
@@ -107,7 +117,7 @@ parametrized testing, mutation testing, exploratory testing, fuzz testing and ma
 
 Let’s dive right in and see few examples of unit tests in different languages and frameworks.
 
-All the tets will document
+All the tests will document a simple FizzBuzz implementation
 
 ???
 Explain what FizzBuzz is
@@ -119,11 +129,12 @@ Explain what FizzBuzz is
 
 ---
 
+class: middle
+
 ```Java
 class AppTest {
     @Test 
     void getMessageCaseOneThenReturnValue() {
-        App klass = new App();
         String expected = "1";
         String actual = klass.getMessage(1);
         assertEquals(expected, actual);
@@ -131,7 +142,6 @@ class AppTest {
 
     @Test 
     void getMessageCaseThreeThenReturnFizz() {
-        App klass = new App();
         String expected = "Fizz";
         String actual = klass.getMessage(3);
         assertEquals(expected, actual);
@@ -139,7 +149,6 @@ class AppTest {
 
     @Test 
     void getMessageCaseFiveThenReturnBuzz() {
-        App klass = new App();
         String expected = "Buzz";
         String actual = klass.getMessage(5);
         assertEquals(expected, actual);
@@ -147,7 +156,6 @@ class AppTest {
 
     @Test 
     void getMessageCaseFifteenThenReturnFizzBuzz () {
-        App klass = new App();
         String expected = "FizzBuzz";
         String actual = klass.getMessage(15);
         assertEquals(expected, actual);
@@ -162,6 +170,9 @@ This is JUnit
 - Test cases
 - Assertions
 ---
+
+class: middle
+
 ```javascript
 describe('FizzBuzz', () => {
   test('case 1 then return 1', () => {
@@ -197,6 +208,9 @@ describe('FizzBuzz', () => {
 This is Jest. 
 Although it appears different, same elements can be identified here.
 ---
+
+class: middle
+
 ```python
 class TestFizzBuzz(unittest.TestCase):
     def test_get_message_case_one_then_return_it(self):
@@ -227,6 +241,9 @@ class TestFizzBuzz(unittest.TestCase):
 ???
 Next up: python using unittest library. Striking resemblance ot JUnit and in fact some people used to call this PyUnit.
 ---
+
+class: middle
+
 ```python
 class TestFizzBuzz:
     def test_get_message_case_one_then_return_it(self):
@@ -259,10 +276,13 @@ We'll use that in the future examples
 
 ---
 
+# .center[Takeaways]
+
 We can immediately observe that despite obvious syntax differences all these test suites are quite similar in structure. 
 In fact there’s a set of certain conventions that most testing environments follow. 
 In all these test suites we can clearly identify the test cases and the assertions. 
 The de facto standard emerged from the SUnit/JUnit and testing frameworks that follow these design principles are collectively called xUnit frameworks. [5]
+
 ???
 Pytest library. 
 
@@ -317,9 +337,7 @@ In my opinion, it’s practical to use common sense when deciding on when a test
 - Sometimes it’s okay to have some duplication in the tests rather than to have a poor abstraction
 - It’s fine for some of the e2e or integration tests to be more than few lines of code. But generally - you don’t want your tests to be more than few lines of code.
 
----
-
-class: middle
+???
 
 As you can see - answering the question „Are the tests good?” can depend on many things. 
 It’s still useful to have those guidelines in mind. 
@@ -343,7 +361,12 @@ To illustrate some key rules we will perform an excercise of taking some totally
 class TestLibrary:
     def test_business_methods(self):
         business = LibraryBusiness()
-        book = Book('Do androids dream of electric sheep?', 'Philip K. Dick', None, None)
+        book = Book(
+            'Do androids dream of electric sheep?', 
+            'Philip K. Dick', 
+            None, 
+            None,
+        )
         account = Account('jsmith@example.com', 'John Smith')
         business.rent(book, to=account)
 
@@ -554,7 +577,9 @@ class TestLibraryBusiness:
         return business
 
     @pytest.mark.parametrize('period', [14, 28])
-    def test_rent_case_can_rent_then_set_return_due_date(self, business, book, account, fake_library_policy, period):
+    def test_rent_case_can_rent_then_set_return_due_date(
+        self, business, book, account, fake_library_policy, period
+    ):
         business.set_library_policy(fake_library_policy(period))
         business.rent(book, to=account)
         assert book.return_due_date == dt.date.today() + dt.timedelta(days=period)
@@ -653,8 +678,8 @@ Same drill - we abstract away the extenrals.
 
 class LibraryBusiness:
     def __init__(self):
-        self._policy: policies.LibraryPolicy = policies.create_library_policy()
-        self._notifications: notifications.NotificationService = notifications.create_notification_service()
+        self._policy = policies.create_library_policy()
+        self._notifications = notifications.create_notification_service()
 
     def set_library_policy(self, policy: policies.LibraryPolicy):
         self._policy = policy
@@ -680,7 +705,9 @@ class TestLibraryBusiness:
 
         return business
 
-    def test_send_overdue_notification_case_book_is_overdue_then_send_email(self, business, book_factory, mocker):
+    def test_send_overdue_notification_case_book_is_overdue_then_send_email(
+        self, business, book_factory, mocker
+    ):
         spy = mocker.create_autospec(notifications.NotificationService)
         business.set_notification_service(spy)
         book = book_factory(is_overdue=True)
