@@ -45,10 +45,11 @@ class LibraryBusiness:
         if not book.return_due_date:
             return 0.
 
-        if book.return_due_date > dt.date.today() - dt.timedelta(days=7):
+        grace_period_end = dt.date.today() - dt.timedelta(days=7)
+
+        if book.return_due_date > grace_period_end:
             return 0.
 
-        days_charged = ((dt.date.today() - dt.timedelta(days=7)) - book.return_due_date).days
-
+        days_charged = (grace_period_end - book.return_due_date).days
         return 1. + 0.25 * days_charged
 
