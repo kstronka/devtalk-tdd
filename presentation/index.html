@@ -44,9 +44,8 @@ class: center, middle
 1. History buff
 2. A dive into xUnit style testing
 3. Anatomy of the tests
-4. Unit testing vs integration testing
-5. Fakes, stubs, mocks
-6. TDD example
+4. Testing patterns
+5. TDD by example
 
 ---
 
@@ -744,31 +743,6 @@ E. g.: A stub for an external api to guarantee data which code under test receiv
 
 ---
 
-# .center[Unit tests vs Integration tests]
-
-So far we haven't discussed whether the tests we did were unit or integration tests. 
-How does one tell a unit test from an integration test apart? 
-
-Actually: it depends! Practice shows than in fact all tests lie on a spectrum between an ideal unit test, 
-integration test all the way through to contract tests and end-to-end tests. But how so?
-
-An ideal unit test is only about a single element as a unit the system under test that runs in a complete isolation. 
-It's free of any dependencies. It's simple and it runs fast. Question is: how do you define a unit? Should it be a method or a class? 
-Should you test private methods?
-
-An integration test tests an interaction of multiple components of the system under tests. It's somewhat slower and more complex than a unit test.
-Similarily, one may ask: if you replace dependencies with fakes - does it make it a unit test? 
-
-In a well designed test suite you have a mixture of all those types of tests.
-
-???
-
-What does that mean?
-
-The testing pyramid.
-
----
-
 # .center[Test Driven Development]
 
 Let's now get to the next level and see what all the fuzz about test driven developement is all about! 
@@ -814,6 +788,13 @@ We're going to implement a feature which calculates a late fee in a library syst
 - A daily fee of 25 cents a day
 
 ---
+class: center, middle
+
+# Thank you for the attention!
+
+Slides and resources available at https://github.com/kstronka/devtalk-tdd
+
+---
 # .center[Bibliography]
 
 [1] Wikipedia contributors. (n. d.), *„Software bug”*. Wikipedia. Retrieved January 20, 2024, from https://en.wikipedia.org/wiki/Software_bug
@@ -846,10 +827,6 @@ We're going to implement a feature which calculates a late fee in a library syst
 
 If you were to read just one thing from the bibliography, just pick [10]. 
 
----
-class: center, middle
-
-# Thank you for the attention!
 
 
     </textarea>
