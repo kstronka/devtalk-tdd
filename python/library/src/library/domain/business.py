@@ -40,3 +40,15 @@ class LibraryBusiness:
 
     def set_notification_service(self, service: notifications.NotificationService):
         self._notifications = service
+
+    def calculate_late_fee(self, book: Book):
+        if not book.return_due_date:
+            return 0.
+
+        if book.return_due_date > dt.date.today() - dt.timedelta(days=7):
+            return 0.
+
+        days_charged = ((dt.date.today() - dt.timedelta(days=7)) - book.return_due_date).days
+
+        return 1. + 0.25 * days_charged
+
